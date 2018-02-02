@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">Simple Task Checker</string>
+    <string name="language">زبان/language</string>
+
+    <string name="fa_name">نام</string>
+    <string name="fa_cancel">انصراف</string>
+    <string name="fa_confirm">تایید</string>
+    <string name="fa_two_step_confirm">تایید دو مرحله ای</string>
+    <string name="fa_dynamic">متغیر</string>
+    <string name="fa_stack">متحرک</string>
+    <string name="fa_static">ثابت</string>
+
+    <string name="en_name">Name</string>
+    <string name="en_cancel">Cancel</string>
+    <string name="en_confirm">Confirm</string>
+    <string name="en_two_step_confirm">Double Tap Confirm</string>
+    <string name="en_dynamic">Dynamic</string>
+    <string name="en_stack">Stack</string>
+    <string name="en_static">Static</string>
+
+</resources>
