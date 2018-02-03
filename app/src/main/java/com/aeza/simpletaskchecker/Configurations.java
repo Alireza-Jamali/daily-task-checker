@@ -193,10 +193,10 @@ public class Configurations extends AppCompatActivity {
                 @Override
                 public void onReceive(Context context, Intent intent) {
 
-                    dynamic(isDoubleTap);
+                    dynamic();
                 }
 
-                private void dynamic(boolean isDoubleTap) {
+                private void dynamic() {
                     String[] data = prefs.getString(appWidgetId + "", "").split(INPUTS_DELIMITER);
                     String btnName = data[counter];
                     switch (btnName.substring(0, 6)) {
@@ -216,16 +216,35 @@ public class Configurations extends AppCompatActivity {
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
                         }
                         break;
-                        default: {
-                            views.setTextColor(btnId, Color.BLACK);
-                            String newBtnName = isStatic ? GREEN_STATE : NO_STATE + btnName.substring(6);
+                        case GREEN_STATE: {
+                            views.setTextColor(btnId, isStatic ? Color.parseColor("#FF8BC34A") : Color.BLACK);
+                            String newBtnName = (isStatic ? GREEN_STATE : NO_STATE) + btnName.substring(6);
                             views.setTextViewText(btnId, newBtnName.substring(6));
                             data[counter] = newBtnName;
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
+
+                            if (isStatic) {
+                                boolean isAllGreen = true;
+                                for (String name : data) {
+                                    if (!name.startsWith(GREEN_STATE)) {
+                                        isAllGreen = false;
+                                    }
+                                }
+                                if (isAllGreen && data.length > 0) {
+                                    for (int i = 0; i < data.length; i++) {
+                                        int btnId = R.id.btn1 + i;
+                                        String btn = NO_STATE + data[i].substring(6);
+                                        views.setTextViewText(btnId , btn.substring(6));
+                                        views.setTextColor(btnId , Color.BLACK);
+                                        data[i] = btn;
+                                    }
+                                    prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
+                                }
+                            }
                         }
                         break;
-
                     }
+
                     appWidgetManager.updateAppWidget(appWidgetId, views);
                 }
             };
