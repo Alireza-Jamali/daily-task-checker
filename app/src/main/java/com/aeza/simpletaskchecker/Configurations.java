@@ -209,20 +209,17 @@ public class Configurations extends AppCompatActivity {
                                 data[currentBtnIndex] = newBtnName;
                             } else {
                                 if (isDoubleTap) {
-                                    int moveDownTurns = (data.length - 1) - currentBtnIndex;
-                                    if (moveDownTurns != 1) {
-                                        String temp = data[currentBtnIndex];
-                                        for (int k = 0; k < moveDownTurns; k++) {
-                                            data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
-                                        }
-                                        data[0] = ORANGE_STATE + temp.substring(6);
+                                    String temp = data[currentBtnIndex];
+                                    for (int k = currentBtnIndex; k > 0; k--) {
+                                        data[k] = data[k - 1];
                                     }
+                                    data[0] = ORANGE_STATE + temp.substring(6);
                                 } else {
                                     int moveUpTurns = (data.length - 1) - currentBtnIndex;
-                                    if (moveUpTurns != 1) {
+                                    if (moveUpTurns > 1) {
                                         String temp = data[currentBtnIndex];
                                         for (int k = 0; k < moveUpTurns; k++) {
-                                            data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
+                                            data[currentBtnIndex + k] = data[currentBtnIndex + k - 1];
                                         }
                                         data[data.length - 1] = GREEN_STATE + temp.substring(6);
                                     }
@@ -247,8 +244,22 @@ public class Configurations extends AppCompatActivity {
                             data[currentBtnIndex] = newBtnName;
 
                             if (isStack) {
-                                for (int k = 0; k < currentBtnIndex - inputs.length; k++) {
-                                    views.setTextViewText(R.id.btn1 + currentBtnIndex + k + 1, inputs[currentBtnIndex + k]);
+                                int moveUpTurns = (data.length - 1) - currentBtnIndex;
+                                if (moveUpTurns != 1) {
+                                    String temp = data[currentBtnIndex];
+                                    for (int k = 0; k < moveUpTurns; k++) {
+                                        data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
+                                    }
+                                    data[data.length - 1] = GREEN_STATE + temp.substring(6);
+                                }
+                                for (int i = 0; i < data.length; i++) {
+                                    int btnId = R.id.btn1 + i;
+                                    views.setTextViewText(btnId, data[i].substring(6));
+                                    views.setTextColor(btnId,
+                                            data[i].startsWith(NO_STATE) ? Color.BLACK :
+                                                    data[i].startsWith(GREEN_STATE) ?
+                                                            Color.parseColor("#FF8BC34A") : Color.parseColor("#FFFF6F00")
+                                    );
                                 }
                             }
 
