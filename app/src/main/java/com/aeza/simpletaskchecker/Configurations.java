@@ -127,21 +127,6 @@ public class Configurations extends AppCompatActivity {
                 }
             }
         });
-
-        Switch doubleTapSw = (Switch) findViewById(R.id.two_step_switch);
-        doubleTapSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isDoubleTap = isChecked;
-            }
-        });
-        Switch stackSw = (Switch) findViewById(R.id.stack_switch);
-        stackSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                isStack = isChecked;
-            }
-        });
     }
 
     public void confirm(View view) {
@@ -168,6 +153,15 @@ public class Configurations extends AppCompatActivity {
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.config_radioGroup);
         int checkedRadioBtn = radioGroup.getCheckedRadioButtonId();
         isStatic = checkedRadioBtn == R.id.radioButton2;
+        prefs.edit().putBoolean(mAppWidgetId + "isStatic", isStatic).apply();
+
+        Switch doubleTapSw = (Switch) findViewById(R.id.two_step_switch);
+        isDoubleTap = doubleTapSw.isChecked();
+        prefs.edit().putBoolean(mAppWidgetId + "isDoubleTap", isDoubleTap).apply();
+
+        Switch stackSw = (Switch) findViewById(R.id.stack_switch);
+        isStack = stackSw.isChecked();
+        prefs.edit().putBoolean(mAppWidgetId + "isStack", isStack).apply();
 
         createAppWidget(context, appWidgetManager, mAppWidgetId, inputs);
 
@@ -185,12 +179,13 @@ public class Configurations extends AppCompatActivity {
     void createAppWidget(Context context, final AppWidgetManager appWidgetManager,
                          final int appWidgetId, final String[] inputs) {
 
-
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
         ArrayList<BroadcastReceiver> localBrList = new ArrayList<>();
         for (int i = 0; i < inputs.length; i++) {
             final int currentBtnIndex = i;
+            prefs.edit().putInt(inputs[i] + "currentBtnIndex", currentBtnIndex).apply();
             final int btnId = R.id.btn1 + i;
+            prefs.edit().putInt(inputs[i] + "btnId", btnId).apply();
             views.setTextViewText(btnId, inputs[i].substring(6));
             views.setViewVisibility(btnId, View.VISIBLE);
 
@@ -216,13 +211,11 @@ public class Configurations extends AppCompatActivity {
                                     data[0] = ORANGE_STATE + temp.substring(6);
                                 } else {
                                     int moveUpTurns = (data.length - 1) - currentBtnIndex;
-                                    if (moveUpTurns > 1) {
-                                        String temp = data[currentBtnIndex];
-                                        for (int k = 0; k < moveUpTurns; k++) {
-                                            data[currentBtnIndex + k] = data[currentBtnIndex + k - 1];
-                                        }
-                                        data[data.length - 1] = GREEN_STATE + temp.substring(6);
+                                    String temp = data[currentBtnIndex];
+                                    for (int k = 0; k < moveUpTurns; k++) {
+                                        data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
                                     }
+                                    data[data.length - 1] = GREEN_STATE + temp.substring(6);
                                 }
                                 for (int i = 0; i < data.length; i++) {
                                     int btnId = R.id.btn1 + i;
@@ -245,13 +238,11 @@ public class Configurations extends AppCompatActivity {
 
                             if (isStack) {
                                 int moveUpTurns = (data.length - 1) - currentBtnIndex;
-                                if (moveUpTurns != 1) {
-                                    String temp = data[currentBtnIndex];
-                                    for (int k = 0; k < moveUpTurns; k++) {
-                                        data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
-                                    }
-                                    data[data.length - 1] = GREEN_STATE + temp.substring(6);
+                                String temp = data[currentBtnIndex];
+                                for (int k = 0; k < moveUpTurns; k++) {
+                                    data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
                                 }
+                                data[data.length - 1] = GREEN_STATE + temp.substring(6);
                                 for (int i = 0; i < data.length; i++) {
                                     int btnId = R.id.btn1 + i;
                                     views.setTextViewText(btnId, data[i].substring(6));
@@ -313,5 +304,6 @@ public class Configurations extends AppCompatActivity {
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
     }
+
 
 }
