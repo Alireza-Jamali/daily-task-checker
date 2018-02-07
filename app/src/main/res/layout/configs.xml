@@ -63,12 +63,6 @@
                 android:layout_weight="1"
                 android:text="@string/fa_static" />
 
-            <RadioButton
-                android:id="@+id/radioButton3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/fa_stack" />
         </RadioGroup>
 
         <LinearLayout
@@ -83,6 +77,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/fa_two_step_confirm" />
+            <Switch
+                android:id="@+id/stack_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/fa_stack" />
 
             <Switch
                 android:id="@+id/language_switch"

@@ -111,19 +111,19 @@ public class Configurations extends AppCompatActivity {
                 if (isChecked) {
                     language = true;
                     ((Switch) findViewById(R.id.two_step_switch)).setText(R.string.en_two_step_confirm);
+                    ((Switch) findViewById(R.id.stack_switch)).setText(R.string.en_stack);
                     ((Button) findViewById(R.id.cancel)).setText(R.string.en_cancel);
                     ((Button) findViewById(R.id.confirm)).setText(R.string.en_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.en_dynamic);
                     ((RadioButton) findViewById(R.id.radioButton2)).setText(R.string.en_static);
-                    ((RadioButton) findViewById(R.id.radioButton3)).setText(R.string.en_stack);
                 } else {
                     language = false;
                     ((Switch) findViewById(R.id.two_step_switch)).setText(R.string.fa_two_step_confirm);
+                    ((Switch) findViewById(R.id.stack_switch)).setText(R.string.fa_stack);
                     ((Button) findViewById(R.id.cancel)).setText(R.string.fa_cancel);
                     ((Button) findViewById(R.id.confirm)).setText(R.string.fa_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.fa_dynamic);
                     ((RadioButton) findViewById(R.id.radioButton2)).setText(R.string.fa_static);
-                    ((RadioButton) findViewById(R.id.radioButton3)).setText(R.string.fa_stack);
                 }
             }
         });
@@ -133,6 +133,13 @@ public class Configurations extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 isDoubleTap = isChecked;
+            }
+        });
+        Switch stackSw = (Switch) findViewById(R.id.stack_switch);
+        stackSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                isStack = isChecked;
             }
         });
     }
@@ -161,7 +168,6 @@ public class Configurations extends AppCompatActivity {
         RadioGroup radioGroup = (RadioGroup) findViewById(R.id.config_radioGroup);
         int checkedRadioBtn = radioGroup.getCheckedRadioButtonId();
         isStatic = checkedRadioBtn == R.id.radioButton2;
-        isStack = checkedRadioBtn == R.id.radioButton3;
 
         createAppWidget(context, appWidgetManager, mAppWidgetId, inputs);
 
@@ -177,34 +183,60 @@ public class Configurations extends AppCompatActivity {
 
 
     void createAppWidget(Context context, final AppWidgetManager appWidgetManager,
-                         final int appWidgetId, String[] inputs) {
+                         final int appWidgetId, final String[] inputs) {
 
 
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
         ArrayList<BroadcastReceiver> localBrList = new ArrayList<>();
         for (int i = 0; i < inputs.length; i++) {
-            final int counter = i;
+            final int currentBtnIndex = i;
             final int btnId = R.id.btn1 + i;
             views.setTextViewText(btnId, inputs[i].substring(6));
             views.setViewVisibility(btnId, View.VISIBLE);
 
             BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-
                 @Override
                 public void onReceive(Context context, Intent intent) {
 
-                    dynamic();
-                }
-
-                private void dynamic() {
                     String[] data = prefs.getString(appWidgetId + "", "").split(INPUTS_DELIMITER);
-                    String btnName = data[counter];
+                    String btnName = data[currentBtnIndex];
                     switch (btnName.substring(0, 6)) {
                         case NO_STATE: {
-                            views.setTextColor(btnId, Color.parseColor(isDoubleTap ? "#FFFF6F00" : "#FF8BC34A"));
-                            String newBtnName = (isDoubleTap ? ORANGE_STATE : GREEN_STATE) + btnName.substring(6);
-                            views.setTextViewText(btnId, newBtnName.substring(6));
-                            data[counter] = newBtnName;
+                            if (!isStack) {
+                                views.setTextColor(btnId, Color.parseColor(isDoubleTap ? "#FFFF6F00" : "#FF8BC34A"));
+                                String newBtnName = (isDoubleTap ? ORANGE_STATE : GREEN_STATE) + btnName.substring(6);
+                                views.setTextViewText(btnId, newBtnName.substring(6));
+                                data[currentBtnIndex] = newBtnName;
+                            } else {
+                                if (isDoubleTap) {
+                                    int moveDownTurns = (data.length - 1) - currentBtnIndex;
+                                    if (moveDownTurns != 1) {
+                                        String temp = data[currentBtnIndex];
+                                        for (int k = 0; k < moveDownTurns; k++) {
+                                            data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
+                                        }
+                                        data[0] = ORANGE_STATE + temp.substring(6);
+                                    }
+                                } else {
+                                    int moveUpTurns = (data.length - 1) - currentBtnIndex;
+                                    if (moveUpTurns != 1) {
+                                        String temp = data[currentBtnIndex];
+                                        for (int k = 0; k < moveUpTurns; k++) {
+                                            data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
+                                        }
+                                        data[data.length - 1] = GREEN_STATE + temp.substring(6);
+                                    }
+                                }
+                                for (int i = 0; i < data.length; i++) {
+                                    int btnId = R.id.btn1 + i;
+                                    views.setTextViewText(btnId, data[i].substring(6));
+                                    views.setTextColor(btnId,
+                                            data[i].startsWith(NO_STATE) ? Color.BLACK :
+                                                    data[i].startsWith(GREEN_STATE) ?
+                                                            Color.parseColor("#FF8BC34A") : Color.parseColor("#FFFF6F00")
+                                    );
+                                }
+                            }
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
                         }
                         break;
@@ -212,7 +244,14 @@ public class Configurations extends AppCompatActivity {
                             views.setTextColor(btnId, Color.parseColor("#FF8BC34A"));
                             String newBtnName = GREEN_STATE + btnName.substring(6);
                             views.setTextViewText(btnId, newBtnName.substring(6));
-                            data[counter] = newBtnName;
+                            data[currentBtnIndex] = newBtnName;
+
+                            if (isStack) {
+                                for (int k = 0; k < currentBtnIndex - inputs.length; k++) {
+                                    views.setTextViewText(R.id.btn1 + currentBtnIndex + k + 1, inputs[currentBtnIndex + k]);
+                                }
+                            }
+
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
                         }
                         break;
@@ -220,7 +259,7 @@ public class Configurations extends AppCompatActivity {
                             views.setTextColor(btnId, isStatic ? Color.parseColor("#FF8BC34A") : Color.BLACK);
                             String newBtnName = (isStatic ? GREEN_STATE : NO_STATE) + btnName.substring(6);
                             views.setTextViewText(btnId, newBtnName.substring(6));
-                            data[counter] = newBtnName;
+                            data[currentBtnIndex] = newBtnName;
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
 
                             if (isStatic) {
@@ -234,8 +273,8 @@ public class Configurations extends AppCompatActivity {
                                     for (int i = 0; i < data.length; i++) {
                                         int btnId = R.id.btn1 + i;
                                         String btn = NO_STATE + data[i].substring(6);
-                                        views.setTextViewText(btnId , btn.substring(6));
-                                        views.setTextColor(btnId , Color.BLACK);
+                                        views.setTextViewText(btnId, btn.substring(6));
+                                        views.setTextColor(btnId, Color.BLACK);
                                         data[i] = btn;
                                     }
                                     prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
@@ -244,9 +283,9 @@ public class Configurations extends AppCompatActivity {
                         }
                         break;
                     }
-
                     appWidgetManager.updateAppWidget(appWidgetId, views);
                 }
+
             };
 
             localBrList.add(broadcastReceiver);
