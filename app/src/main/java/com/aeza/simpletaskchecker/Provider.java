@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -59,7 +58,7 @@ public class Provider extends AppWidgetProvider {
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
         ArrayList<BroadcastReceiver> localBrList = new ArrayList<>();
         for (int i = 0; i < inputs.length; i++) {
-            int btnId = R.id.btn1 + i;
+            int btnId = R.id.btn_a + i;
             views.setTextViewText(btnId, inputs[i].substring(6));
             views.setTextColor(btnId,
                     inputs[i].startsWith(NO_STATE) ? Color.BLACK :
@@ -103,7 +102,7 @@ public class Provider extends AppWidgetProvider {
                                     data[data.length - 1] = GREEN_STATE + temp.substring(6);
                                 }
                                 for (int i = 0; i < data.length; i++) {
-                                    int tempBtnId = R.id.btn1 + i;
+                                    int tempBtnId = R.id.btn_a + i;
                                     views.setTextViewText(tempBtnId, data[i].substring(6));
                                     views.setTextColor(tempBtnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
@@ -129,7 +128,7 @@ public class Provider extends AppWidgetProvider {
                                 }
                                 data[data.length - 1] = GREEN_STATE + temp.substring(6);
                                 for (int i = 0; i < data.length; i++) {
-                                    int tempBtnId = R.id.btn1 + i;
+                                    int tempBtnId = R.id.btn_a + i;
                                     views.setTextViewText(tempBtnId, data[i].substring(6));
                                     views.setTextColor(tempBtnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
@@ -158,7 +157,7 @@ public class Provider extends AppWidgetProvider {
                                 }
                                 if (isAllGreen && data.length > 0) {
                                     for (int i = 0; i < data.length; i++) {
-                                        int tempBtnId = R.id.btn1 + i;
+                                        int tempBtnId = R.id.btn_a + i;
                                         String btn = NO_STATE + data[i].substring(6);
                                         views.setTextViewText(tempBtnId, btn.substring(6));
                                         views.setTextColor(tempBtnId, Color.BLACK);

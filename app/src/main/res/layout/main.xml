@@ -7,61 +7,61 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/btn1"
+        android:id="@+id/btn_a"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn2"
+        android:id="@+id/btn_b"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn3"
+        android:id="@+id/btn_c"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn4"
+        android:id="@+id/btn_d"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn5"
+        android:id="@+id/btn_e"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn6"
+        android:id="@+id/btn_f"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn7"
+        android:id="@+id/btn_g"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn8"
+        android:id="@+id/btn_h"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn9"
+        android:id="@+id/btn_i"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:textAllCaps="false"/>
     <Button
-        android:id="@+id/btn10"
+        android:id="@+id/btn_j"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"

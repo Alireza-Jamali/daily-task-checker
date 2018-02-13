@@ -83,6 +83,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/fa_stack" />
+            <Switch
+                android:id="@+id/time_switch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/fa_time_based" />
 
             <Switch
                 android:id="@+id/language_switch"
@@ -92,8 +98,7 @@
                 android:showText="true"
                 android:text="@string/language"
                 android:textOff="Fa"
-                android:textOn="En"
-                app:showText="true" />
+                android:textOn="En" />
         </LinearLayout>
     </LinearLayout>
 

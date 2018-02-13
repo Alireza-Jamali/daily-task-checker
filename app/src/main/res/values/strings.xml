@@ -9,6 +9,8 @@
     <string name="fa_dynamic">متغیر</string>
     <string name="fa_stack">متحرک</string>
     <string name="fa_static">ثابت</string>
+    <string name="fa_time_based">اعمال زمان</string>
+    <string name="fa_name_already_in_use">این نام قبلا استفاده شده است</string>
 
     <string name="en_name">Name</string>
     <string name="en_cancel">Cancel</string>
@@ -17,5 +19,7 @@
     <string name="en_dynamic">Dynamic</string>
     <string name="en_stack">Stack</string>
     <string name="en_static">Static</string>
+    <string name="en_time_based">Time Based</string>
+    <string name="en_name_already_in_use">name already in use!</string>
 
 </resources>

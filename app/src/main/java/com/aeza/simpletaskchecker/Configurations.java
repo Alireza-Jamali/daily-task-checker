@@ -35,14 +35,17 @@ public class Configurations extends AppCompatActivity {
     LinearLayout inputsWrapper;
 
     public Configurations context;
-    public static boolean language;
+    boolean language;
     final public static String INPUTS_DELIMITER = "D73t9d";
     final public static String ORANGE_STATE = "D73t8d";
     final public static String GREEN_STATE = "D73t7d";
     final public static String NO_STATE = "D73t0d";
+    final static String ORANGE = "#FFFF6F00";
+    final static String GREEN = "#FF8BC34A";
     boolean isDoubleTap;
     boolean isStatic;
     boolean isStack;
+    boolean isTime;
 
     SharedPreferences prefs;
 
@@ -68,9 +71,9 @@ public class Configurations extends AppCompatActivity {
             return;
         }
 
-        inputsWrapper = (LinearLayout) findViewById(R.id.inputs_wrapper);
+        inputsWrapper = findViewById(R.id.inputs_wrapper);
 
-        SeekBar seeker = (SeekBar) findViewById(R.id.seeker_bar);
+        SeekBar seeker = findViewById(R.id.seeker_bar);
         seeker.setMax(10);
         seeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -104,7 +107,7 @@ public class Configurations extends AppCompatActivity {
                 }
             }
         });
-        Switch languageSw = (Switch) findViewById(R.id.language_switch);
+        Switch languageSw = findViewById(R.id.language_switch);
         languageSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -112,6 +115,7 @@ public class Configurations extends AppCompatActivity {
                     language = true;
                     ((Switch) findViewById(R.id.two_step_switch)).setText(R.string.en_two_step_confirm);
                     ((Switch) findViewById(R.id.stack_switch)).setText(R.string.en_stack);
+                    ((Switch) findViewById(R.id.time_switch)).setText(R.string.en_time_based);
                     ((Button) findViewById(R.id.cancel)).setText(R.string.en_cancel);
                     ((Button) findViewById(R.id.confirm)).setText(R.string.en_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.en_dynamic);
@@ -120,6 +124,7 @@ public class Configurations extends AppCompatActivity {
                     language = false;
                     ((Switch) findViewById(R.id.two_step_switch)).setText(R.string.fa_two_step_confirm);
                     ((Switch) findViewById(R.id.stack_switch)).setText(R.string.fa_stack);
+                    ((Switch) findViewById(R.id.time_switch)).setText(R.string.fa_time_based);
                     ((Button) findViewById(R.id.cancel)).setText(R.string.fa_cancel);
                     ((Button) findViewById(R.id.confirm)).setText(R.string.fa_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.fa_dynamic);
@@ -130,7 +135,7 @@ public class Configurations extends AppCompatActivity {
     }
 
     public void confirm(View view) {
-        LinearLayout inputsWrapper = (LinearLayout) findViewById(R.id.inputs_wrapper);
+        LinearLayout inputsWrapper = findViewById(R.id.inputs_wrapper);
         String[] inputs = new String[inputsWrapper.getChildCount()];
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -141,7 +146,7 @@ public class Configurations extends AppCompatActivity {
             for (int id : widgetIds) {
                 for (String name : prefs.getString(id + "", "").split(INPUTS_DELIMITER)) {
                     if (inputs[i].equals(name)) {
-                        input.setError("این نام قبلا استفاده شده است");
+                        input.setError(getString(language ? R.string.en_name_already_in_use : R.string.fa_name_already_in_use ));
                         return;
                     }
                 }
@@ -150,18 +155,22 @@ public class Configurations extends AppCompatActivity {
 
         prefs.edit().putString(mAppWidgetId + "", TextUtils.join(INPUTS_DELIMITER, inputs)).apply();
 
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.config_radioGroup);
+        RadioGroup radioGroup = findViewById(R.id.config_radioGroup);
         int checkedRadioBtn = radioGroup.getCheckedRadioButtonId();
         isStatic = checkedRadioBtn == R.id.radioButton2;
         prefs.edit().putBoolean(mAppWidgetId + "isStatic", isStatic).apply();
 
-        Switch doubleTapSw = (Switch) findViewById(R.id.two_step_switch);
+        Switch doubleTapSw = findViewById(R.id.two_step_switch);
         isDoubleTap = doubleTapSw.isChecked();
         prefs.edit().putBoolean(mAppWidgetId + "isDoubleTap", isDoubleTap).apply();
 
-        Switch stackSw = (Switch) findViewById(R.id.stack_switch);
+        Switch stackSw = findViewById(R.id.stack_switch);
         isStack = stackSw.isChecked();
         prefs.edit().putBoolean(mAppWidgetId + "isStack", isStack).apply();
+
+        Switch timeSw = findViewById(R.id.time_switch);
+        isTime = timeSw.isChecked();
+        prefs.edit().putBoolean(mAppWidgetId + "isTime", isTime).apply();
 
         createAppWidget(context, appWidgetManager, mAppWidgetId, inputs);
 
@@ -184,10 +193,28 @@ public class Configurations extends AppCompatActivity {
         for (int i = 0; i < inputs.length; i++) {
             final int currentBtnIndex = i;
             prefs.edit().putInt(inputs[i] + "currentBtnIndex", currentBtnIndex).apply();
-            final int btnId = R.id.btn1 + i;
+            final int btnId = R.id.btn_a + i;
             prefs.edit().putInt(inputs[i] + "btnId", btnId).apply();
             views.setTextViewText(btnId, inputs[i].substring(6));
             views.setViewVisibility(btnId, View.VISIBLE);
+
+            if (isTime) {
+                views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
+                inputs[0] = ORANGE_STATE + inputs[0].substring(6);
+                prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, inputs)).apply();
+//                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+//                Calendar calendar = Calendar.getInstance();
+//                Date now = null;
+//                try {
+//                    now = sdf.parse(calendar.get(HOUR_OF_DAY) + ":" + calendar.get(MINUTE));
+//
+//                    now.after(sdf.parse("06:00"));
+//
+//                } catch (ParseException e) {
+//                    e.printStackTrace();
+//                }
+
+            }
 
             BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                 @Override
@@ -197,68 +224,129 @@ public class Configurations extends AppCompatActivity {
                     String btnName = data[currentBtnIndex];
                     switch (btnName.substring(0, 6)) {
                         case NO_STATE: {
-                            if (!isStack) {
-                                views.setTextColor(btnId, Color.parseColor(isDoubleTap ? "#FFFF6F00" : "#FF8BC34A"));
-                                String newBtnName = (isDoubleTap ? ORANGE_STATE : GREEN_STATE) + btnName.substring(6);
-                                views.setTextViewText(btnId, newBtnName.substring(6));
-                                data[currentBtnIndex] = newBtnName;
-                            } else {
+                            if (isStack) {
                                 if (isDoubleTap) {
                                     String temp = data[currentBtnIndex];
-                                    for (int k = currentBtnIndex; k > 0; k--) {
-                                        data[k] = data[k - 1];
-                                    }
+                                    System.arraycopy(data, 0, data, 1, currentBtnIndex);
                                     data[0] = ORANGE_STATE + temp.substring(6);
                                 } else {
                                     int moveUpTurns = (data.length - 1) - currentBtnIndex;
                                     String temp = data[currentBtnIndex];
-                                    for (int k = 0; k < moveUpTurns; k++) {
-                                        data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
-                                    }
+                                    System.arraycopy(data, currentBtnIndex + 1, data, currentBtnIndex, moveUpTurns);
                                     data[data.length - 1] = GREEN_STATE + temp.substring(6);
+                                    if (isTime) {
+                                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
+                                        String next = ORANGE_STATE + data[0].substring(6);
+                                        views.setTextViewText(R.id.btn_a, next.substring(6));
+                                        data[0] = next;
+                                    }
                                 }
                                 for (int i = 0; i < data.length; i++) {
-                                    int btnId = R.id.btn1 + i;
+                                    int btnId = R.id.btn_a + i;
                                     views.setTextViewText(btnId, data[i].substring(6));
                                     views.setTextColor(btnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
                                                     data[i].startsWith(GREEN_STATE) ?
-                                                            Color.parseColor("#FF8BC34A") : Color.parseColor("#FFFF6F00")
+                                                            Color.parseColor(GREEN) : Color.parseColor(ORANGE)
                                     );
+                                }
+                            } else {
+                                views.setTextColor(btnId, Color.parseColor(isDoubleTap ? ORANGE : GREEN));
+                                String newBtnName = (isDoubleTap ? ORANGE_STATE : GREEN_STATE) + btnName.substring(6);
+                                views.setTextViewText(btnId, newBtnName.substring(6));
+                                data[currentBtnIndex] = newBtnName;
+                                if (isTime && !isDoubleTap && currentBtnIndex != (data.length - 1)) {
+                                    boolean hasOrange = false;
+                                    for (String name : data) {
+                                        if (name.startsWith(ORANGE_STATE)) {
+                                            hasOrange = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!hasOrange) {
+                                        int i = 1;
+                                        boolean skipLastBtn = false;
+                                        while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
+                                            if (currentBtnIndex + i < data.length -1) {
+                                                i++;
+                                            } else {
+                                                skipLastBtn = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!skipLastBtn) {
+                                            views.setTextColor(btnId + i, Color.parseColor(ORANGE));
+                                            data[currentBtnIndex + i] = ORANGE_STATE + data[currentBtnIndex + i].substring(6);
+                                        }
+                                    }
                                 }
                             }
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
                         }
                         break;
                         case ORANGE_STATE: {
-                            views.setTextColor(btnId, Color.parseColor("#FF8BC34A"));
+                            views.setTextColor(btnId, Color.parseColor(GREEN));
                             String newBtnName = GREEN_STATE + btnName.substring(6);
                             views.setTextViewText(btnId, newBtnName.substring(6));
                             data[currentBtnIndex] = newBtnName;
-
                             if (isStack) {
                                 int moveUpTurns = (data.length - 1) - currentBtnIndex;
                                 String temp = data[currentBtnIndex];
-                                for (int k = 0; k < moveUpTurns; k++) {
-                                    data[currentBtnIndex + k] = data[currentBtnIndex + k + 1];
-                                }
+                                System.arraycopy(data, currentBtnIndex + 1, data, currentBtnIndex, moveUpTurns);
                                 data[data.length - 1] = GREEN_STATE + temp.substring(6);
                                 for (int i = 0; i < data.length; i++) {
-                                    int btnId = R.id.btn1 + i;
+                                    int btnId = R.id.btn_a + i;
                                     views.setTextViewText(btnId, data[i].substring(6));
                                     views.setTextColor(btnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
                                                     data[i].startsWith(GREEN_STATE) ?
-                                                            Color.parseColor("#FF8BC34A") : Color.parseColor("#FFFF6F00")
+                                                            Color.parseColor(GREEN) : Color.parseColor(ORANGE)
                                     );
                                 }
+                                if (isTime) {
+                                    boolean isAllGreen = true;
+                                    for (String name : data) {
+                                        if (!name.startsWith(GREEN_STATE)) {
+                                            isAllGreen = false;
+                                            break;
+                                        }
+                                    }
+                                    if (!isAllGreen) {
+                                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
+                                        data[0] = ORANGE_STATE + data[0].substring(6);
+                                        prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
+                                    }
+                                }
+                            } else if (isTime && currentBtnIndex != (data.length - 1)) {
+                                boolean hasOrange = false;
+                                for (String name : data) {
+                                    if (name.startsWith(ORANGE_STATE)) {
+                                        hasOrange = true;
+                                        break;
+                                    }
+                                }
+                                if (!hasOrange) {
+                                    int i = 1;
+                                    boolean skipLastBtn = false;
+                                    while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
+                                        if (currentBtnIndex + i < data.length-1) {
+                                            i++;
+                                        } else {
+                                            skipLastBtn = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!skipLastBtn) {
+                                        views.setTextColor(btnId + i, Color.parseColor(ORANGE));
+                                        data[currentBtnIndex + i] = ORANGE_STATE + data[currentBtnIndex + i].substring(6);
+                                    }
+                                }
                             }
-
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
                         }
                         break;
                         case GREEN_STATE: {
-                            views.setTextColor(btnId, isStatic ? Color.parseColor("#FF8BC34A") : Color.BLACK);
+                            views.setTextColor(btnId, isStatic ? Color.parseColor(GREEN) : Color.BLACK);
                             String newBtnName = (isStatic ? GREEN_STATE : NO_STATE) + btnName.substring(6);
                             views.setTextViewText(btnId, newBtnName.substring(6));
                             data[currentBtnIndex] = newBtnName;
@@ -269,14 +357,15 @@ public class Configurations extends AppCompatActivity {
                                 for (String name : data) {
                                     if (!name.startsWith(GREEN_STATE)) {
                                         isAllGreen = false;
+                                        break;
                                     }
                                 }
                                 if (isAllGreen && data.length > 0) {
                                     for (int i = 0; i < data.length; i++) {
-                                        int btnId = R.id.btn1 + i;
-                                        String btn = NO_STATE + data[i].substring(6);
+                                        int btnId = R.id.btn_a + i;
+                                        String btn = ((i == 0 && isTime) ? ORANGE_STATE : NO_STATE) + data[i].substring(6);
                                         views.setTextViewText(btnId, btn.substring(6));
-                                        views.setTextColor(btnId, Color.BLACK);
+                                        views.setTextColor(btnId, (i == 0 && isTime) ? Color.parseColor(ORANGE) : Color.BLACK);
                                         data[i] = btn;
                                     }
                                     prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
