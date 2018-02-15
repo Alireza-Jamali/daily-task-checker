@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Simple Task Checker</string>
     <string name="language">زبان/language</string>
+    <string name="fa">Fa</string>
+    <string name="en">En</string>
 
     <string name="fa_name">نام</string>
     <string name="fa_cancel">انصراف</string>

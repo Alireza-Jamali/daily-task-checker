@@ -23,7 +23,14 @@ import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import static java.util.Calendar.HOUR_OF_DAY;
+import static java.util.Calendar.MINUTE;
 
 
 /**
@@ -35,17 +42,19 @@ public class Configurations extends AppCompatActivity {
     LinearLayout inputsWrapper;
 
     public Configurations context;
+
     boolean language;
-    final public static String INPUTS_DELIMITER = "D73t9d";
-    final public static String ORANGE_STATE = "D73t8d";
-    final public static String GREEN_STATE = "D73t7d";
-    final public static String NO_STATE = "D73t0d";
-    final static String ORANGE = "#FFFF6F00";
-    final static String GREEN = "#FF8BC34A";
     boolean isDoubleTap;
     boolean isStatic;
     boolean isStack;
     boolean isTime;
+
+    static final String INPUTS_DELIMITER = "D73t9d";
+    static final String ORANGE_STATE = "D73t8d";
+    static final String GREEN_STATE = "D73t7d";
+    static final String NO_STATE = "D73t0d";
+    static final String ORANGE = "#FFFF6F00";
+    static final String GREEN = "#FF8BC34A";
 
     SharedPreferences prefs;
 
@@ -132,6 +141,19 @@ public class Configurations extends AppCompatActivity {
                 }
             }
         });
+
+        Switch timeSw = findViewById(R.id.time_switch);
+        timeSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                if (isTime = isChecked) {
+                    findViewById(R.id.time_text).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.time_text).setVisibility(View.GONE);
+                }
+            }
+        });
+        prefs.edit().putBoolean(mAppWidgetId + "isTime", isTime).apply();
     }
 
     public void confirm(View view) {
@@ -168,11 +190,10 @@ public class Configurations extends AppCompatActivity {
         isStack = stackSw.isChecked();
         prefs.edit().putBoolean(mAppWidgetId + "isStack", isStack).apply();
 
-        Switch timeSw = findViewById(R.id.time_switch);
-        isTime = timeSw.isChecked();
-        prefs.edit().putBoolean(mAppWidgetId + "isTime", isTime).apply();
+        EditText timeTxt = findViewById(R.id.time_text);
+        prefs.edit().putString(mAppWidgetId + "timeText", timeTxt.getText().toString()).apply();
 
-        createAppWidget(context, appWidgetManager, mAppWidgetId, inputs);
+        initAppWidgets(context, appWidgetManager, mAppWidgetId);
 
         Intent resultValue = new Intent();
         resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
@@ -185,42 +206,56 @@ public class Configurations extends AppCompatActivity {
     }
 
 
-    void createAppWidget(Context context, final AppWidgetManager appWidgetManager,
-                         final int appWidgetId, final String[] inputs) {
+    public static void initAppWidgets(Context context, final AppWidgetManager appWidgetManager,
+                                      final int appWidgetId) {
 
+        SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + ".prefs", Context.MODE_PRIVATE);
+        String[] inputs = prefs.getString(appWidgetId + "", "").split(INPUTS_DELIMITER);
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
         ArrayList<BroadcastReceiver> localBrList = new ArrayList<>();
         for (int i = 0; i < inputs.length; i++) {
-            final int currentBtnIndex = i;
-            prefs.edit().putInt(inputs[i] + "currentBtnIndex", currentBtnIndex).apply();
-            final int btnId = R.id.btn_a + i;
-            prefs.edit().putInt(inputs[i] + "btnId", btnId).apply();
+            int btnId = R.id.btn_a + i;
             views.setTextViewText(btnId, inputs[i].substring(6));
+            views.setTextColor(btnId,
+                    inputs[i].startsWith(NO_STATE) ? Color.BLACK :
+                            inputs[i].startsWith(GREEN_STATE) ?
+                                    Color.parseColor(GREEN) : Color.parseColor(ORANGE)
+            );
             views.setViewVisibility(btnId, View.VISIBLE);
 
+            boolean isTime = prefs.getBoolean(appWidgetId + "isTime", false);
             if (isTime) {
-                views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
-                inputs[0] = ORANGE_STATE + inputs[0].substring(6);
-                prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, inputs)).apply();
-//                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-//                Calendar calendar = Calendar.getInstance();
-//                Date now = null;
-//                try {
-//                    now = sdf.parse(calendar.get(HOUR_OF_DAY) + ":" + calendar.get(MINUTE));
-//
-//                    now.after(sdf.parse("06:00"));
-//
-//                } catch (ParseException e) {
-//                    e.printStackTrace();
-//                }
+                String timeText = prefs.getString(appWidgetId + "timeText", "06:00");
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                Calendar calendar = Calendar.getInstance();
+                Date now;
+                try {
+                    now = sdf.parse(calendar.get(HOUR_OF_DAY) + ":" + calendar.get(MINUTE));
+                    if (now.after(sdf.parse(timeText))) {
+                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
+                        inputs[0] = ORANGE_STATE + inputs[0].substring(6);
+                        prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, inputs)).apply();
+                    }
 
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
             BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
+                    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+                    SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + ".prefs", Context.MODE_PRIVATE);
+
+                    boolean isDoubleTap = prefs.getBoolean(appWidgetId + "isDoubleTap", false);
+                    boolean isStatic = prefs.getBoolean(appWidgetId + "isStatic", false);
+                    boolean isStack = prefs.getBoolean(appWidgetId + "isStack", false);
+                    boolean isTime = prefs.getBoolean(appWidgetId + "isTime", false);
 
                     String[] data = prefs.getString(appWidgetId + "", "").split(INPUTS_DELIMITER);
+                    int currentBtnIndex = intent.getIntExtra("btn_index", 0);
+                    int btnId = intent.getIntExtra("btn_id", 0);
                     String btnName = data[currentBtnIndex];
                     switch (btnName.substring(0, 6)) {
                         case NO_STATE: {
@@ -242,9 +277,9 @@ public class Configurations extends AppCompatActivity {
                                     }
                                 }
                                 for (int i = 0; i < data.length; i++) {
-                                    int btnId = R.id.btn_a + i;
-                                    views.setTextViewText(btnId, data[i].substring(6));
-                                    views.setTextColor(btnId,
+                                    int tempBtnId = R.id.btn_a + i;
+                                    views.setTextViewText(tempBtnId, data[i].substring(6));
+                                    views.setTextColor(tempBtnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
                                                     data[i].startsWith(GREEN_STATE) ?
                                                             Color.parseColor(GREEN) : Color.parseColor(ORANGE)
@@ -267,7 +302,7 @@ public class Configurations extends AppCompatActivity {
                                         int i = 1;
                                         boolean skipLastBtn = false;
                                         while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
-                                            if (currentBtnIndex + i < data.length -1) {
+                                            if (currentBtnIndex + i < data.length - 1) {
                                                 i++;
                                             } else {
                                                 skipLastBtn = true;
@@ -295,9 +330,9 @@ public class Configurations extends AppCompatActivity {
                                 System.arraycopy(data, currentBtnIndex + 1, data, currentBtnIndex, moveUpTurns);
                                 data[data.length - 1] = GREEN_STATE + temp.substring(6);
                                 for (int i = 0; i < data.length; i++) {
-                                    int btnId = R.id.btn_a + i;
-                                    views.setTextViewText(btnId, data[i].substring(6));
-                                    views.setTextColor(btnId,
+                                    int tempBtnId = R.id.btn_a + i;
+                                    views.setTextViewText(tempBtnId, data[i].substring(6));
+                                    views.setTextColor(tempBtnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
                                                     data[i].startsWith(GREEN_STATE) ?
                                                             Color.parseColor(GREEN) : Color.parseColor(ORANGE)
@@ -329,7 +364,7 @@ public class Configurations extends AppCompatActivity {
                                     int i = 1;
                                     boolean skipLastBtn = false;
                                     while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
-                                        if (currentBtnIndex + i < data.length-1) {
+                                        if (currentBtnIndex + i < data.length - 1) {
                                             i++;
                                         } else {
                                             skipLastBtn = true;
@@ -362,10 +397,10 @@ public class Configurations extends AppCompatActivity {
                                 }
                                 if (isAllGreen && data.length > 0) {
                                     for (int i = 0; i < data.length; i++) {
-                                        int btnId = R.id.btn_a + i;
+                                        int tempBtnId = R.id.btn_a + i;
                                         String btn = ((i == 0 && isTime) ? ORANGE_STATE : NO_STATE) + data[i].substring(6);
-                                        views.setTextViewText(btnId, btn.substring(6));
-                                        views.setTextColor(btnId, (i == 0 && isTime) ? Color.parseColor(ORANGE) : Color.BLACK);
+                                        views.setTextViewText(tempBtnId, btn.substring(6));
+                                        views.setTextColor(tempBtnId, (i == 0 && isTime) ? Color.parseColor(ORANGE) : Color.BLACK);
                                         data[i] = btn;
                                     }
                                     prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
@@ -382,14 +417,18 @@ public class Configurations extends AppCompatActivity {
             localBrList.add(broadcastReceiver);
 
             Intent btnIntent = new Intent(inputs[i]);
+
+            btnIntent.putExtra("btn_index", i);
+            btnIntent.putExtra("btn_id", btnId);
+
             context.getApplicationContext().registerReceiver(broadcastReceiver, new IntentFilter(inputs[i]));
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(),
-                    appWidgetId, btnIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    appWidgetId, btnIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             views.setOnClickPendingIntent(btnId, pendingIntent);
 
         }
-        Provider.broadCastList.put(appWidgetId, localBrList);
+        Provider.broadcastList.put(appWidgetId, localBrList);
         appWidgetManager.updateAppWidget(appWidgetId, views);
 
     }

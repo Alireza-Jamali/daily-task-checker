@@ -90,6 +90,16 @@
                 android:layout_weight="1"
                 android:text="@string/fa_time_based" />
 
+            <EditText
+                android:id="@+id/time_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:inputType="time"
+                android:hint="زمان خود را وارد کنید"
+                android:visibility="gone"/>
+
             <Switch
                 android:id="@+id/language_switch"
                 android:layout_width="wrap_content"
@@ -97,8 +107,8 @@
                 android:layout_weight="1"
                 android:showText="true"
                 android:text="@string/language"
-                android:textOff="Fa"
-                android:textOn="En" />
+                android:textOff="@string/fa"
+                android:textOn="@string/en" />
         </LinearLayout>
     </LinearLayout>
 
