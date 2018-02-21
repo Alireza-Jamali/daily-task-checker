@@ -1,5 +1,6 @@
 package com.aeza.simpletaskchecker;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -47,14 +49,16 @@ public class Configurations extends AppCompatActivity {
     boolean isDoubleTap;
     boolean isStatic;
     boolean isStack;
-    boolean isTime;
 
     static final String INPUTS_DELIMITER = "D73t9d";
     static final String ORANGE_STATE = "D73t8d";
     static final String GREEN_STATE = "D73t7d";
+    static final String TIME_STATE = "D73t6d";
     static final String NO_STATE = "D73t0d";
-    static final String ORANGE = "#FFFF6F00";
-    static final String GREEN = "#FF8BC34A";
+    static final String ORANGE_COLOR = "#FFFF6F00";
+    static final String GREEN_COLOR = "#FF8BC34A";
+    static final String RED_COLOR = "#FFE53935";
+    static final String TIME_COLOR = "#FFE040FB";
 
     SharedPreferences prefs;
 
@@ -129,6 +133,9 @@ public class Configurations extends AppCompatActivity {
                     ((Button) findViewById(R.id.confirm)).setText(R.string.en_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.en_dynamic);
                     ((RadioButton) findViewById(R.id.radioButton2)).setText(R.string.en_static);
+                    ((EditText) findViewById(R.id.time_start_text)).setHint(R.string.en_time_start_text);
+                    ((EditText) findViewById(R.id.time_deadline_text)).setHint(R.string.en_time_deadline_text);
+                    prefs.edit().putBoolean(mAppWidgetId + "language", true).apply();
                 } else {
                     language = false;
                     ((Switch) findViewById(R.id.two_step_switch)).setText(R.string.fa_two_step_confirm);
@@ -138,6 +145,9 @@ public class Configurations extends AppCompatActivity {
                     ((Button) findViewById(R.id.confirm)).setText(R.string.fa_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.fa_dynamic);
                     ((RadioButton) findViewById(R.id.radioButton2)).setText(R.string.fa_static);
+                    ((EditText) findViewById(R.id.time_start_text)).setHint(R.string.fa_time_start_text);
+                    ((EditText) findViewById(R.id.time_deadline_text)).setHint(R.string.fa_time_deadline_text);
+                    prefs.edit().putBoolean(mAppWidgetId + "language", false).apply();
                 }
             }
         });
@@ -146,14 +156,16 @@ public class Configurations extends AppCompatActivity {
         timeSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isTime = isChecked) {
-                    findViewById(R.id.time_text).setVisibility(View.VISIBLE);
+                if (isChecked) {
+                    findViewById(R.id.time_start_text).setVisibility(View.VISIBLE);
+                    findViewById(R.id.time_deadline_text).setVisibility(View.VISIBLE);
                 } else {
-                    findViewById(R.id.time_text).setVisibility(View.GONE);
+                    findViewById(R.id.time_start_text).setVisibility(View.GONE);
+                    findViewById(R.id.time_deadline_text).setVisibility(View.GONE);
                 }
+                prefs.edit().putBoolean(mAppWidgetId + "isTime", isChecked).apply();
             }
         });
-        prefs.edit().putBoolean(mAppWidgetId + "isTime", isTime).apply();
     }
 
     public void confirm(View view) {
@@ -168,7 +180,7 @@ public class Configurations extends AppCompatActivity {
             for (int id : widgetIds) {
                 for (String name : prefs.getString(id + "", "").split(INPUTS_DELIMITER)) {
                     if (inputs[i].equals(name)) {
-                        input.setError(getString(language ? R.string.en_name_already_in_use : R.string.fa_name_already_in_use ));
+                        input.setError(getString(language ? R.string.en_name_already_in_use : R.string.fa_name_already_in_use));
                         return;
                     }
                 }
@@ -190,8 +202,11 @@ public class Configurations extends AppCompatActivity {
         isStack = stackSw.isChecked();
         prefs.edit().putBoolean(mAppWidgetId + "isStack", isStack).apply();
 
-        EditText timeTxt = findViewById(R.id.time_text);
-        prefs.edit().putString(mAppWidgetId + "timeText", timeTxt.getText().toString()).apply();
+        EditText timeStartText = findViewById(R.id.time_start_text);
+        prefs.edit().putString(mAppWidgetId + "timeStartText", timeStartText.getText().toString()).apply();
+
+        EditText timeDeadlineText = findViewById(R.id.time_deadline_text);
+        prefs.edit().putString(mAppWidgetId + "timeDeadlineText", timeDeadlineText.getText().toString()).apply();
 
         initAppWidgets(context, appWidgetManager, mAppWidgetId);
 
@@ -210,36 +225,89 @@ public class Configurations extends AppCompatActivity {
                                       final int appWidgetId) {
 
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + ".prefs", Context.MODE_PRIVATE);
-        String[] inputs = prefs.getString(appWidgetId + "", "").split(INPUTS_DELIMITER);
+        String[] data = prefs.getString(appWidgetId + "", "").split(INPUTS_DELIMITER);
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.main);
         ArrayList<BroadcastReceiver> localBrList = new ArrayList<>();
-        for (int i = 0; i < inputs.length; i++) {
+        for (int i = 0; i < data.length; i++) {
             int btnId = R.id.btn_a + i;
-            views.setTextViewText(btnId, inputs[i].substring(6));
+            views.setTextViewText(btnId, data[i].substring(6));
             views.setTextColor(btnId,
-                    inputs[i].startsWith(NO_STATE) ? Color.BLACK :
-                            inputs[i].startsWith(GREEN_STATE) ?
-                                    Color.parseColor(GREEN) : Color.parseColor(ORANGE)
+                    data[i].startsWith(NO_STATE) ? Color.BLACK :
+                            data[i].startsWith(GREEN_STATE) ?
+                                    Color.parseColor(GREEN_COLOR) : Color.parseColor(ORANGE_COLOR)
             );
             views.setViewVisibility(btnId, View.VISIBLE);
 
             boolean isTime = prefs.getBoolean(appWidgetId + "isTime", false);
             if (isTime) {
-                String timeText = prefs.getString(appWidgetId + "timeText", "06:00");
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                Calendar calendar = Calendar.getInstance();
-                Date now;
-                try {
-                    now = sdf.parse(calendar.get(HOUR_OF_DAY) + ":" + calendar.get(MINUTE));
-                    if (now.after(sdf.parse(timeText))) {
-                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
-                        inputs[0] = ORANGE_STATE + inputs[0].substring(6);
-                        prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, inputs)).apply();
+                boolean isAllGreen = true;
+                for (String name : data) {
+                    if (!name.startsWith(GREEN_STATE)) {
+                        isAllGreen = false;
+                        break;
                     }
+                }
+                try {
+                    String timeStartText = prefs.getString(appWidgetId + "timeStartText", "06:00");
+                    String timeDeadlineText = prefs.getString(appWidgetId + "timeDeadlineText", "18:00");
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                    Calendar calendar = Calendar.getInstance();
+                    Date now = sdf.parse(calendar.get(HOUR_OF_DAY) + ":" + calendar.get(MINUTE));
+                    if (!isAllGreen) {
+                        if (now.after(sdf.parse(timeStartText))) {
+                            boolean hasTimeState = false;
+                            for (int k = 0; k < data.length; k++) {
+                                if (data[k].startsWith(TIME_STATE)) {
+                                    hasTimeState = true;
+                                    if (now.after(sdf.parse(timeDeadlineText))) {
+                                        views.setTextColor(R.id.btn_a + k, Color.parseColor(RED_COLOR));
+                                        data[k] = TIME_STATE + data[k].substring(6);
+                                        boolean lan = prefs.getBoolean(appWidgetId + "language", false);
 
+                                        NotificationCompat.Builder mBuilder =
+                                                new NotificationCompat.Builder(context)
+                                                        .setSmallIcon(R.drawable.ic_stat_name)
+                                                        .setContentTitle(lan ? context.getString(R.string.en_missed_task) : context.getString(R.string.fa_missed_task))
+                                                        .setContentText(lan ? data[i] + context.getString(R.string.en_isnt_checked) : data[i].substring(6));
+                                        NotificationManager mNotificationManager =
+                                                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                                        mNotificationManager.notify(758, mBuilder.build());
+                                    }
+                                    break;
+                                }
+                            }
+                            boolean isTimeTaskChecked = prefs.getBoolean(appWidgetId + "isTimeTaskChecked", false);
+                            if (!hasTimeState && !isTimeTaskChecked) {
+                                int j = 0;
+                                boolean skipLastBtn = false;
+                                while (data[j].startsWith(GREEN_STATE)) {
+                                    if (j < data.length - 1) {
+                                        j++;
+                                    } else {
+                                        skipLastBtn = true;
+                                        break;
+                                    }
+                                }
+                                if (!skipLastBtn) {
+                                    views.setTextColor(R.id.btn_a + j, Color.parseColor(TIME_COLOR));
+                                    data[j] = TIME_STATE + data[j].substring(6);
+                                }
+                            }
+                        } else {
+                            prefs.edit().putBoolean(appWidgetId + "isTimeTaskChecked", false).apply();
+                        }
+                    } else if (data.length > 0 && !now.after(sdf.parse(timeStartText))) {
+                        for (int k = 0; k < data.length; k++) {
+                            int tempBtnId = R.id.btn_a + k;
+                            String btn = NO_STATE + data[k].substring(6);
+                            views.setTextColor(tempBtnId, Color.BLACK);
+                            data[k] = btn;
+                        }
+                    }
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
+                prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
             }
 
             BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -258,6 +326,21 @@ public class Configurations extends AppCompatActivity {
                     int btnId = intent.getIntExtra("btn_id", 0);
                     String btnName = data[currentBtnIndex];
                     switch (btnName.substring(0, 6)) {
+                        case TIME_STATE: {
+                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                            Calendar calendar = Calendar.getInstance();
+                            String timeStartText = prefs.getString(appWidgetId + "timeStartText", "06:00");
+                            try {
+                                Date now = sdf.parse(calendar.get(HOUR_OF_DAY) + ":" + calendar.get(MINUTE));
+                                if (!now.before(sdf.parse(timeStartText))) {
+                                    data[currentBtnIndex] = NO_STATE + data[currentBtnIndex].substring(6);
+                                    prefs.edit().putBoolean(appWidgetId + "isTimeTaskChecked", true).apply();
+                                }
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                        }
                         case NO_STATE: {
                             if (isStack) {
                                 if (isDoubleTap) {
@@ -269,12 +352,12 @@ public class Configurations extends AppCompatActivity {
                                     String temp = data[currentBtnIndex];
                                     System.arraycopy(data, currentBtnIndex + 1, data, currentBtnIndex, moveUpTurns);
                                     data[data.length - 1] = GREEN_STATE + temp.substring(6);
-                                    if (isTime) {
-                                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
-                                        String next = ORANGE_STATE + data[0].substring(6);
-                                        views.setTextViewText(R.id.btn_a, next.substring(6));
-                                        data[0] = next;
-                                    }
+//                                    if (isTime) {
+//                                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE_COLOR));
+//                                        String next = ORANGE_STATE + data[0].substring(6);
+//                                        views.setTextViewText(R.id.btn_a, next.substring(6));
+//                                        data[0] = next;
+//                                    }
                                 }
                                 for (int i = 0; i < data.length; i++) {
                                     int tempBtnId = R.id.btn_a + i;
@@ -282,45 +365,45 @@ public class Configurations extends AppCompatActivity {
                                     views.setTextColor(tempBtnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
                                                     data[i].startsWith(GREEN_STATE) ?
-                                                            Color.parseColor(GREEN) : Color.parseColor(ORANGE)
+                                                            Color.parseColor(GREEN_COLOR) : Color.parseColor(ORANGE_COLOR)
                                     );
                                 }
                             } else {
-                                views.setTextColor(btnId, Color.parseColor(isDoubleTap ? ORANGE : GREEN));
+                                views.setTextColor(btnId, Color.parseColor(isDoubleTap ? ORANGE_COLOR : GREEN_COLOR));
                                 String newBtnName = (isDoubleTap ? ORANGE_STATE : GREEN_STATE) + btnName.substring(6);
                                 views.setTextViewText(btnId, newBtnName.substring(6));
                                 data[currentBtnIndex] = newBtnName;
-                                if (isTime && !isDoubleTap && currentBtnIndex != (data.length - 1)) {
-                                    boolean hasOrange = false;
-                                    for (String name : data) {
-                                        if (name.startsWith(ORANGE_STATE)) {
-                                            hasOrange = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!hasOrange) {
-                                        int i = 1;
-                                        boolean skipLastBtn = false;
-                                        while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
-                                            if (currentBtnIndex + i < data.length - 1) {
-                                                i++;
-                                            } else {
-                                                skipLastBtn = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!skipLastBtn) {
-                                            views.setTextColor(btnId + i, Color.parseColor(ORANGE));
-                                            data[currentBtnIndex + i] = ORANGE_STATE + data[currentBtnIndex + i].substring(6);
-                                        }
-                                    }
-                                }
+//                                if (isTime && !isDoubleTap && currentBtnIndex != (data.length - 1)) {
+//                                    boolean hasOrange = false;
+//                                    for (String name : data) {
+//                                        if (name.startsWith(ORANGE_STATE)) {
+//                                            hasOrange = true;
+//                                            break;
+//                                        }
+//                                    }
+//                                    if (!hasOrange) {
+//                                        int i = 1;
+//                                        boolean skipLastBtn = false;
+//                                        while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
+//                                            if (currentBtnIndex + i < data.length - 1) {
+//                                                i++;
+//                                            } else {
+//                                                skipLastBtn = true;
+//                                                break;
+//                                            }
+//                                        }
+//                                        if (!skipLastBtn) {
+//                                            views.setTextColor(btnId + i, Color.parseColor(ORANGE_COLOR));
+//                                            data[currentBtnIndex + i] = ORANGE_STATE + data[currentBtnIndex + i].substring(6);
+//                                        }
+//                                    }
+//                                }
                             }
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
                         }
                         break;
                         case ORANGE_STATE: {
-                            views.setTextColor(btnId, Color.parseColor(GREEN));
+                            views.setTextColor(btnId, Color.parseColor(GREEN_COLOR));
                             String newBtnName = GREEN_STATE + btnName.substring(6);
                             views.setTextViewText(btnId, newBtnName.substring(6));
                             data[currentBtnIndex] = newBtnName;
@@ -335,53 +418,54 @@ public class Configurations extends AppCompatActivity {
                                     views.setTextColor(tempBtnId,
                                             data[i].startsWith(NO_STATE) ? Color.BLACK :
                                                     data[i].startsWith(GREEN_STATE) ?
-                                                            Color.parseColor(GREEN) : Color.parseColor(ORANGE)
+                                                            Color.parseColor(GREEN_COLOR) : Color.parseColor(ORANGE_COLOR)
                                     );
                                 }
-                                if (isTime) {
-                                    boolean isAllGreen = true;
-                                    for (String name : data) {
-                                        if (!name.startsWith(GREEN_STATE)) {
-                                            isAllGreen = false;
-                                            break;
-                                        }
-                                    }
-                                    if (!isAllGreen) {
-                                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE));
-                                        data[0] = ORANGE_STATE + data[0].substring(6);
-                                        prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
-                                    }
-                                }
-                            } else if (isTime && currentBtnIndex != (data.length - 1)) {
-                                boolean hasOrange = false;
-                                for (String name : data) {
-                                    if (name.startsWith(ORANGE_STATE)) {
-                                        hasOrange = true;
-                                        break;
-                                    }
-                                }
-                                if (!hasOrange) {
-                                    int i = 1;
-                                    boolean skipLastBtn = false;
-                                    while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
-                                        if (currentBtnIndex + i < data.length - 1) {
-                                            i++;
-                                        } else {
-                                            skipLastBtn = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!skipLastBtn) {
-                                        views.setTextColor(btnId + i, Color.parseColor(ORANGE));
-                                        data[currentBtnIndex + i] = ORANGE_STATE + data[currentBtnIndex + i].substring(6);
-                                    }
-                                }
+//                                if (isTime) {
+//                                    boolean isAllGreen = true;
+//                                    for (String name : data) {
+//                                        if (!name.startsWith(GREEN_STATE)) {
+//                                            isAllGreen = false;
+//                                            break;
+//                                        }
+//                                    }
+//                                    if (!isAllGreen) {
+//                                        views.setTextColor(R.id.btn_a, Color.parseColor(ORANGE_COLOR));
+//                                        data[0] = ORANGE_STATE + data[0].substring(6);
+//                                        prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
+//                                    }
+//                                }
                             }
+//                            else if (isTime && currentBtnIndex != (data.length - 1)) {
+//                                boolean hasOrange = false;
+//                                for (String name : data) {
+//                                    if (name.startsWith(ORANGE_STATE)) {
+//                                        hasOrange = true;
+//                                        break;
+//                                    }
+//                                }
+//                                if (!hasOrange) {
+//                                    int i = 1;
+//                                    boolean skipLastBtn = false;
+//                                    while (data[currentBtnIndex + i].startsWith(GREEN_STATE)) {
+//                                        if (currentBtnIndex + i < data.length - 1) {
+//                                            i++;
+//                                        } else {
+//                                            skipLastBtn = true;
+//                                            break;
+//                                        }
+//                                    }
+//                                    if (!skipLastBtn) {
+//                                        views.setTextColor(btnId + i, Color.parseColor(ORANGE_COLOR));
+//                                        data[currentBtnIndex + i] = ORANGE_STATE + data[currentBtnIndex + i].substring(6);
+//                                    }
+//                                }
+//                            }
                             prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
                         }
                         break;
                         case GREEN_STATE: {
-                            views.setTextColor(btnId, isStatic ? Color.parseColor(GREEN) : Color.BLACK);
+                            views.setTextColor(btnId, isStatic ? Color.parseColor(GREEN_COLOR) : Color.BLACK);
                             String newBtnName = (isStatic ? GREEN_STATE : NO_STATE) + btnName.substring(6);
                             views.setTextViewText(btnId, newBtnName.substring(6));
                             data[currentBtnIndex] = newBtnName;
@@ -400,7 +484,7 @@ public class Configurations extends AppCompatActivity {
                                         int tempBtnId = R.id.btn_a + i;
                                         String btn = ((i == 0 && isTime) ? ORANGE_STATE : NO_STATE) + data[i].substring(6);
                                         views.setTextViewText(tempBtnId, btn.substring(6));
-                                        views.setTextColor(tempBtnId, (i == 0 && isTime) ? Color.parseColor(ORANGE) : Color.BLACK);
+                                        views.setTextColor(tempBtnId, (i == 0 && isTime) ? Color.parseColor(ORANGE_COLOR) : Color.BLACK);
                                         data[i] = btn;
                                     }
                                     prefs.edit().putString(appWidgetId + "", TextUtils.join(INPUTS_DELIMITER, data)).apply();
@@ -416,12 +500,12 @@ public class Configurations extends AppCompatActivity {
 
             localBrList.add(broadcastReceiver);
 
-            Intent btnIntent = new Intent(inputs[i]);
+            Intent btnIntent = new Intent(data[i]);
 
             btnIntent.putExtra("btn_index", i);
             btnIntent.putExtra("btn_id", btnId);
 
-            context.getApplicationContext().registerReceiver(broadcastReceiver, new IntentFilter(inputs[i]));
+            context.getApplicationContext().registerReceiver(broadcastReceiver, new IntentFilter(data[i]));
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(context.getApplicationContext(),
                     appWidgetId, btnIntent, PendingIntent.FLAG_UPDATE_CURRENT);

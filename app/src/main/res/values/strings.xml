@@ -13,6 +13,9 @@
     <string name="fa_static">ثابت</string>
     <string name="fa_time_based">اعمال زمان</string>
     <string name="fa_name_already_in_use">این نام قبلا استفاده شده است</string>
+    <string name="fa_time_start_text">از چه ساعتی شروع شود؟ (مثال 13:00)</string>
+    <string name="fa_time_deadline_text">چه ساعتی هشدار فراموشی داده شود؟</string>
+    <string name="fa_missed_task">فعالیت فراموش شده!</string>
 
     <string name="en_name">Name</string>
     <string name="en_cancel">Cancel</string>
@@ -23,5 +26,12 @@
     <string name="en_static">Static</string>
     <string name="en_time_based">Time Based</string>
     <string name="en_name_already_in_use">name already in use!</string>
+    <string name="en_time_start_text">When to start the task? (example 13:00)</string>
+    <string name="en_time_deadline_text">When is the deadline?</string>
+    <string name="channel_name">aeza</string>
+    <string name="channel_description">notifying tasks which deadlines have been passed.</string>
+    <string name="en_missed_task">Missed Task!</string>
+    <string name="en_isnt_checked"> is not Checked.</string>
+
 
 </resources>
