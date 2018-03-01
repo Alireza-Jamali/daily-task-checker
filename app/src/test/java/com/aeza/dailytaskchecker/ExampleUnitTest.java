@@ -1,4 +1,4 @@
-package com.aeza.simpletaskchecker;
+package com.aeza.dailytaskchecker;
 
 import org.junit.Test;
 

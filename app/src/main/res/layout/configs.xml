@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center|top"
@@ -11,7 +10,8 @@
         android:id="@+id/seeker_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp"
+        android:max="20"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,12 +77,14 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/fa_two_step_confirm" />
+
             <Switch
                 android:id="@+id/stack_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/fa_stack" />
+
             <Switch
                 android:id="@+id/time_switch"
                 android:layout_width="wrap_content"
@@ -96,20 +98,23 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:inputType="time"
                 android:hint="@string/fa_time_start_text"
+                android:inputType="time"
+                android:maxLength="5"
                 android:textSize="13sp"
-                />
+                android:visibility="gone" />
+
             <EditText
                 android:id="@+id/time_deadline_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
-                android:inputType="time"
                 android:hint="@string/fa_time_deadline_text"
+                android:inputType="time"
+                android:maxLength="5"
                 android:textSize="13sp"
-                />
+                android:visibility="gone" />
 
             <Switch
                 android:id="@+id/language_switch"
@@ -123,13 +128,19 @@
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/inputs_wrapper"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/inputs_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+        </LinearLayout>
+    </ScrollView>
 
 
 </LinearLayout>

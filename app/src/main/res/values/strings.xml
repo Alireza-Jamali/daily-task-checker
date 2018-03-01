@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Simple Task Checker</string>
+    <string name="app_name">Daily Task Checker</string>
     <string name="language">زبان/language</string>
     <string name="fa">Fa</string>
     <string name="en">En</string>
@@ -16,6 +16,8 @@
     <string name="fa_time_start_text">از چه ساعتی شروع شود؟ (مثال 13:00)</string>
     <string name="fa_time_deadline_text">چه ساعتی هشدار فراموشی داده شود؟</string>
     <string name="fa_missed_task">فعالیت فراموش شده!</string>
+    <string name="fa_start_time_toast_dialog">زمان شروع تغییر یافت به</string>
+    <string name="fa_deadline_time_toast_dialog">زمان هشدار تغییر یافت به</string>
 
     <string name="en_name">Name</string>
     <string name="en_cancel">Cancel</string>
@@ -31,7 +33,9 @@
     <string name="channel_name">aeza</string>
     <string name="channel_description">notifying tasks which deadlines have been passed.</string>
     <string name="en_missed_task">Missed Task!</string>
-    <string name="en_isnt_checked"> is not Checked.</string>
+    <string name="en_isnt_checked">is not Checked.</string>
+    <string name="en_start_time_toast_dialog">Start time changed to</string>
+    <string name="en_deadline_time_toast_dialog">Deadline time changed to</string>
 
 
 </resources>

@@ -1,10 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        SeyyedAlirezaJamali {
+        }
+    }
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
-        applicationId 'com.aeza.simplepillschecker'
+        applicationId 'com.aeza.dailytaskchecker'
         minSdkVersion 17
         targetSdkVersion 25
         versionCode 1

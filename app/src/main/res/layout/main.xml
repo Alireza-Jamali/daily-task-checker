@@ -7,63 +7,222 @@
     android:orientation="vertical">
 
     <Button
-        android:id="@+id/btn_a"
+        android:id="@+id/btn_10"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_b"
+        android:id="@+id/btn_11"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_c"
+        android:id="@+id/btn_12"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_d"
+        android:id="@+id/btn_13"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_e"
+        android:id="@+id/btn_14"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_f"
+        android:id="@+id/btn_15"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_g"
+        android:id="@+id/btn_16"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_h"
+        android:id="@+id/btn_17"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_i"
+        android:id="@+id/btn_18"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
     <Button
-        android:id="@+id/btn_j"
+        android:id="@+id/btn_19"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:textAllCaps="false"/>
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_20"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_21"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_22"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_23"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_24"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_25"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_26"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_27"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_28"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_29"
+        android:layout_width="wrap_content"
+        android:layout_height="27dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/btn_bg"
+        android:shadowColor="#000000"
+        android:shadowRadius="4"
+        android:textAllCaps="false"
+        android:visibility="gone" />
 </LinearLayout>

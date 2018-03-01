@@ -1,4 +1,4 @@
-package com.aeza.simpletaskchecker;
+package com.aeza.dailytaskchecker;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
