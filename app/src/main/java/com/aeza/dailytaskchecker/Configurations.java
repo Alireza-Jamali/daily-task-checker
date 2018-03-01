@@ -172,19 +172,17 @@ public class Configurations extends AppCompatActivity {
         });
     }
 
-    private void removeEmptyInputs(LinearLayout inputsWrapper) {
+    private String[] removeEmptyStringsFromArray(String[] inputs) {
         String result = "";
-        for (int i = 0; i < inputsWrapper.getChildCount(); i++) {
-            EditText input = ((EditText) inputsWrapper.getChildAt(i));
-            if (input.getText().toString().isEmpty()) {
-                result += i + "|";
-            }
+        for(String in : inputs) {
+            result += in.substring(6).isEmpty() ? "" : in + INPUTS_DELIMITER;
         }
+        inputs = result.split(INPUTS_DELIMITER);
+        return inputs;
     }
 
     public void confirm(View view) {
         LinearLayout inputsWrapper = findViewById(R.id.inputs_wrapper);
-//        removeEmptyInputs(inputsWrapper);
         String[] inputs = new String[inputsWrapper.getChildCount()];
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
@@ -198,11 +196,15 @@ public class Configurations extends AppCompatActivity {
                         input.setError(getString(language ? R.string.en_name_already_in_use : R.string.fa_name_already_in_use));
                         return;
                     }
+                    if (inputs[i].substring(6).isEmpty()) {
+                        input.setError(getString(language ? R.string.en_cant_be_empty : R.string.fa_cant_be_empty));
+                        return;
+                    }
                 }
             }
 
         }
-
+        inputs = removeEmptyStringsFromArray(inputs);
         prefs.edit().putString(mAppWidgetId + "", TextUtils.join(INPUTS_DELIMITER, inputs)).apply();
 
         RadioGroup radioGroup = findViewById(R.id.config_radioGroup);
