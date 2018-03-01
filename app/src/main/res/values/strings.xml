@@ -38,6 +38,7 @@
     <string name="en_isnt_checked">is not Checked.</string>
     <string name="en_start_time_toast_dialog">Start time changed to</string>
     <string name="en_deadline_time_toast_dialog">Deadline time changed to</string>
+    <string name="fa_author">Author: Seyyed Alireza Jamali</string>
 
 
 </resources>
