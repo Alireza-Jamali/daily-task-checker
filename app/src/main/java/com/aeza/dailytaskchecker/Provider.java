@@ -3,7 +3,6 @@ package com.aeza.dailytaskchecker;
 import android.app.NotificationManager;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,12 +12,17 @@ import android.widget.RemoteViews;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 
-import static com.aeza.dailytaskchecker.Configurations.*;
+import static com.aeza.dailytaskchecker.Configurations.GREEN_COLOR;
+import static com.aeza.dailytaskchecker.Configurations.GREEN_STATE;
+import static com.aeza.dailytaskchecker.Configurations.INPUTS_DELIMITER;
+import static com.aeza.dailytaskchecker.Configurations.NO_STATE;
+import static com.aeza.dailytaskchecker.Configurations.ORANGE_COLOR;
+import static com.aeza.dailytaskchecker.Configurations.ORANGE_STATE;
+import static com.aeza.dailytaskchecker.Configurations.TIME_STATE;
+import static com.aeza.dailytaskchecker.Configurations.getColorFromState;
 import static com.aeza.dailytaskchecker.Configurations.initAppWidgets;
 import static java.util.Calendar.HOUR_OF_DAY;
 import static java.util.Calendar.MINUTE;

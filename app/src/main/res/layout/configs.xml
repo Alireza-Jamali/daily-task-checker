@@ -1,137 +1,193 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/configs_wrapper"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center|top"
-    android:orientation="vertical"
-    android:padding="10dp">
+    android:gravity="center|top">
 
     <SeekBar
         android:id="@+id/seeker_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:max="20"/>
+        android:layout_height="30dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:max="20"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/cancel"
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="100dp"
+        android:layout_marginTop="8dp"
+        android:onClick="cancel"
+        android:text="@string/fa_cancel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seeker_bar"
+        android:textAllCaps="false"/>
+
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="91dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:onClick="confirm"
+        android:text="@string/fa_confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.035"
+        app:layout_constraintStart_toEndOf="@+id/cancel"
+        app:layout_constraintTop_toBottomOf="@+id/seeker_bar"
+        android:textAllCaps="false"/>
+
+    <RadioGroup
+        android:id="@+id/config_radioGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:checkedButton="@+id/radioButton1"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.025"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cancel"
+        app:layout_constraintVertical_bias="0.0">
+
+        <RadioButton
+            android:id="@+id/radioButton1"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="cancel"
-            android:text="@string/fa_cancel" />
+            android:layout_height="30dp"
+            android:text="@string/fa_dynamic"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="97dp" />
 
-        <Button
-            android:id="@+id/confirm"
+        <RadioButton
+            android:id="@+id/radioButton2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="confirm"
-            android:text="@string/fa_confirm" />
+            android:layout_height="30dp"
+            android:text="@string/fa_static"
+            tools:layout_editor_absoluteX="8dp"
+            tools:layout_editor_absoluteY="127dp" />
 
-    </LinearLayout>
+    </RadioGroup>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="horizontal">
+    <Switch
+        android:id="@+id/two_step_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/fa_two_step_confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/confirm" />
 
+    <Switch
+        android:id="@+id/stack_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/fa_stack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/two_step_switch" />
 
-        <RadioGroup
-            android:id="@+id/config_radioGroup"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:checkedButton="@+id/radioButton1">
+    <Switch
+        android:id="@+id/time_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/fa_time_based"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/stack_switch" />
 
-            <RadioButton
-                android:id="@+id/radioButton1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/fa_dynamic" />
+    <EditText
+        android:id="@+id/time_start_text"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@android:color/transparent"
+        android:hint="@string/fa_time_start_text"
+        android:inputType="time"
+        android:maxLength="5"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/time_switch"
+        android:textAlignment="textEnd"/>
 
-            <RadioButton
-                android:id="@+id/radioButton2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/fa_static" />
+    <EditText
+        android:id="@+id/time_deadline_text"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:background="@android:color/transparent"
+        android:hint="@string/fa_time_deadline_text"
+        android:inputType="time"
+        android:maxLength="5"
+        android:textSize="13sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/time_start_text"
+        android:textAlignment="textEnd"/>
 
-        </RadioGroup>
-
-        <LinearLayout
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="vertical">
-
-            <Switch
-                android:id="@+id/two_step_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/fa_two_step_confirm" />
-
-            <Switch
-                android:id="@+id/stack_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/fa_stack" />
-
-            <Switch
-                android:id="@+id/time_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/fa_time_based" />
-
-            <EditText
-                android:id="@+id/time_start_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="@string/fa_time_start_text"
-                android:inputType="time"
-                android:maxLength="5"
-                android:textSize="13sp"
-                android:visibility="gone" />
-
-            <EditText
-                android:id="@+id/time_deadline_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:hint="@string/fa_time_deadline_text"
-                android:inputType="time"
-                android:maxLength="5"
-                android:textSize="13sp"
-                android:visibility="gone" />
-
-            <Switch
-                android:id="@+id/language_switch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:showText="true"
-                android:text="@string/language"
-                android:textOff="@string/fa"
-                android:textOn="@string/en" />
-        </LinearLayout>
-    </LinearLayout>
+    <Switch
+        android:id="@+id/language_switch"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:showText="true"
+        android:text="@string/language"
+        android:textOff="@string/fa"
+        android:textOn="@string/en"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/time_deadline_text" />
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_weight="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/language_switch"
+        app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
             android:id="@+id/inputs_wrapper"
@@ -143,5 +199,4 @@
         </LinearLayout>
     </ScrollView>
 
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>

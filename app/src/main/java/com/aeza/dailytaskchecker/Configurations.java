@@ -3,19 +3,15 @@ package com.aeza.dailytaskchecker;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,11 +26,8 @@ import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -339,13 +332,6 @@ public class Configurations extends AppCompatActivity {
                         } else {
                             prefs.edit().putBoolean(appWidgetId + "isTimeTaskChecked", false).apply();
                         }
-                    } else if (data.length > 0 && !now.after(sdf.parse(timeStartText))) {
-                        for (int k = 0; k < data.length; k++) {
-                            int tempBtnId = R.id.btn_10 + k;
-                            String btn = NO_STATE + data[k].substring(6);
-                            views.setTextColor(tempBtnId, Color.BLACK);
-                            data[k] = btn;
-                        }
                     }
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -376,6 +362,7 @@ public class Configurations extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Toast.makeText(this, "Seyyed.Alireza.Jamali@gmail.com", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Telegram: @aeza90", Toast.LENGTH_LONG).show();
         return super.onOptionsItemSelected(item);
     }
 }
