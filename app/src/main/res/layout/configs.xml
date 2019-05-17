@@ -51,17 +51,14 @@
         android:id="@+id/config_radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:checkedButton="@+id/radioButton1"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.025"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cancel"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@+id/cancel">
 
         <RadioButton
             android:id="@+id/radioButton1"
@@ -105,10 +102,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
-        app:layout_constraintTop_toBottomOf="@+id/two_step_switch" />
+        app:layout_constraintTop_toBottomOf="@+id/two_step_switch"
+        android:textSize="10sp"/>
 
     <Switch
-        android:id="@+id/time_switch"
+        android:id="@+id/time_switch_daily"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:layout_marginEnd="8dp"
@@ -121,7 +119,7 @@
         app:layout_constraintTop_toBottomOf="@+id/stack_switch" />
 
     <EditText
-        android:id="@+id/time_start_text"
+        android:id="@+id/time_start_text_daily"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:layout_marginEnd="8dp"
@@ -130,48 +128,83 @@
         android:hint="@string/fa_time_start_text"
         android:inputType="time"
         android:maxLength="5"
-        android:textSize="13sp"
+        android:textAlignment="textEnd"
         android:visibility="gone"
+        android:textSize="13sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.737"
         app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
-        app:layout_constraintTop_toBottomOf="@+id/time_switch"
-        android:textAlignment="textEnd"/>
+        app:layout_constraintTop_toBottomOf="@+id/time_switch_daily" />
 
     <EditText
-        android:id="@+id/time_deadline_text"
+        android:id="@+id/time_deadline_text_daily"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
         android:background="@android:color/transparent"
         android:hint="@string/fa_time_deadline_text"
         android:inputType="time"
         android:maxLength="5"
-        android:textSize="13sp"
+        android:textAlignment="textEnd"
         android:visibility="gone"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.761"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/time_start_text_daily" />
+
+    <Switch
+        android:id="@+id/time_switch_hourly"
+        android:layout_width="wrap_content"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/fa_time_based_hourly"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
-        app:layout_constraintTop_toBottomOf="@+id/time_start_text"
-        android:textAlignment="textEnd"/>
+        app:layout_constraintTop_toBottomOf="@+id/time_deadline_text_daily" />
+
+    <EditText
+        android:id="@+id/time_deadline_text_hourly"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:hint="@string/fa_time_based_hourly_period_offtime"
+        android:visibility="gone"
+        android:inputType="time"
+        android:maxLength="5"
+        android:textAlignment="textEnd"
+        android:textSize="13sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/time_switch_hourly" />
+
 
     <Switch
         android:id="@+id/language_switch"
         android:layout_width="wrap_content"
         android:layout_height="25dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="244dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="8dp"
         android:showText="true"
         android:text="@string/language"
         android:textOff="@string/fa"
         android:textOn="@string/en"
+        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/config_radioGroup"
-        app:layout_constraintTop_toBottomOf="@+id/time_deadline_text" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/config_radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/config_radioGroup"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -186,8 +219,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/language_switch"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toBottomOf="@+id/time_deadline_text_hourly"
+        android:background="@drawable/border">
 
         <LinearLayout
             android:id="@+id/inputs_wrapper"

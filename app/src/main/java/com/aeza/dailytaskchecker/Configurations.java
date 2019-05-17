@@ -3,15 +3,19 @@ package com.aeza.dailytaskchecker;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +44,9 @@ import static java.util.Calendar.MINUTE;
  */
 
 public class Configurations extends AppCompatActivity {
+
+    public static final String PACKAGE_NAME = "com.aeza.dailytaskchecker";
+
     int mAppWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     LinearLayout inputsWrapper;
 
@@ -49,6 +56,7 @@ public class Configurations extends AppCompatActivity {
     boolean isDoubleTap;
     boolean isStatic;
     boolean isStack;
+    boolean isHour;
 
     static final String INPUTS_DELIMITER = "D73t9d";
     static final String ORANGE_STATE = "D73t8d";
@@ -86,21 +94,58 @@ public class Configurations extends AppCompatActivity {
 
         inputsWrapper = findViewById(R.id.inputs_wrapper);
 
-        SeekBar seeker = findViewById(R.id.seeker_bar);
+        final SeekBar seeker = findViewById(R.id.seeker_bar);
         seeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int childCount = inputsWrapper.getChildCount();
-                progress -= childCount;
-                if (progress != -1) {
-                    for (int i = 0; i < progress; i++) {
-                        EditText editText = new EditText(inputsWrapper.getContext());
-                        editText.setHint(language ? R.string.en_name : R.string.fa_name);
-                        editText.setBackgroundColor(Color.TRANSPARENT);
-                        inputsWrapper.addView(editText);
+                if (!isHour) {
+                    int childCount = inputsWrapper.getChildCount();
+                    progress -= childCount;
+                    if (progress >= 0) {// slider to right
+
+                        for (int i = 0; i < progress; i++) {
+                            EditText editText = new EditText(inputsWrapper.getContext());
+                            editText.setHint(language ? R.string.en_name : R.string.fa_name);
+                            editText.setBackgroundResource(R.drawable.inputtexts_border);
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.MATCH_PARENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            params.bottomMargin = 3;
+                            editText.setLayoutParams(params);
+                            inputsWrapper.addView(editText);
+                        }
+                    } else {// slider to left
+                        inputsWrapper.removeViewAt(childCount - 1);
                     }
                 } else {
-                    inputsWrapper.removeViewAt(childCount - 1);
+                    int childCount = inputsWrapper.getChildCount();
+                    progress -= (childCount / 2);
+                    if (progress >= 0) {// slider to right
+                        for (int i = 0; i < progress; i++) {
+                            EditText editText = new EditText(inputsWrapper.getContext());
+                            editText.setHint(language ? R.string.en_name : R.string.fa_name);
+                            editText.setBackgroundResource(R.drawable.inputtexts_border);
+                            editText.setPadding(language ? 25 : 200, 3, language ? 200 : 25, 3);
+                            inputsWrapper.addView(editText);
+
+                            EditText hourlyAlarm = new EditText(inputsWrapper.getContext());
+                            hourlyAlarm.setInputType(InputType.TYPE_CLASS_NUMBER);
+                            hourlyAlarm.setHint(language ? getString(R.string.en_repeatHR) : getString(R.string.fa_repeatHR));
+                            hourlyAlarm.setBackgroundResource(R.drawable.inputtexts_border);
+                            LinearLayout.LayoutParams hourlyAlarmParams = new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                                    LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            hourlyAlarmParams.topMargin = -75;
+                            hourlyAlarmParams.gravity = language ? Gravity.END : Gravity.START;
+                            hourlyAlarm.setLayoutParams(hourlyAlarmParams);
+                            inputsWrapper.addView(hourlyAlarm);
+                        }
+                    } else {// slider to left
+                        inputsWrapper.removeViewAt(childCount - 1);
+                        inputsWrapper.removeViewAt(childCount - 2);
+                    }
                 }
             }
 
@@ -111,10 +156,15 @@ public class Configurations extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (seekBar.getProgress() != inputsWrapper.getChildCount()) {
-                    int progress = seekBar.getProgress();
-                    while (progress != inputsWrapper.getChildCount()) {
+                if (!isHour) {
+                    while (seekBar.getProgress() != inputsWrapper.getChildCount()) {
                         inputsWrapper.removeViewAt(inputsWrapper.getChildCount() - 1);
+                    }
+                } else {
+                    while (seekBar.getProgress() != (inputsWrapper.getChildCount() / 2)) {
+                        int childCount = inputsWrapper.getChildCount();
+                        inputsWrapper.removeViewAt(childCount - 1);
+                        inputsWrapper.removeViewAt(childCount - 2);
                     }
                 }
             }
@@ -123,53 +173,90 @@ public class Configurations extends AppCompatActivity {
         languageSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                prefs.edit().putBoolean(mAppWidgetId + "language", isChecked).apply();
                 if (isChecked) {
                     language = true;
                     ((Switch) findViewById(R.id.two_step_switch)).setText(R.string.en_two_step_confirm);
                     ((Switch) findViewById(R.id.stack_switch)).setText(R.string.en_stack);
-                    ((Switch) findViewById(R.id.time_switch)).setText(R.string.en_time_based);
+                    ((Switch) findViewById(R.id.time_switch_daily)).setText(R.string.en_time_based);
+                    ((Switch) findViewById(R.id.time_switch_hourly)).setText(R.string.en_time_based_hourly);
                     ((Button) findViewById(R.id.cancel)).setText(R.string.en_cancel);
                     ((Button) findViewById(R.id.confirm)).setText(R.string.en_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.en_dynamic);
                     ((RadioButton) findViewById(R.id.radioButton2)).setText(R.string.en_static);
-                    ((EditText) findViewById(R.id.time_start_text)).setHint(R.string.en_time_start_text);
-                    ((EditText) findViewById(R.id.time_deadline_text)).setHint(R.string.en_time_deadline_text);
-                    prefs.edit().putBoolean(mAppWidgetId + "language", true).apply();
+                    ((EditText) findViewById(R.id.time_start_text_daily)).setHint(R.string.en_time_start_text);
+                    ((EditText) findViewById(R.id.time_deadline_text_daily)).setHint(R.string.en_time_deadline_text);
+                    ((EditText) findViewById(R.id.time_deadline_text_hourly)).setHint(R.string.en_time_based_hourly_offtime);
                 } else {
                     language = false;
                     ((Switch) findViewById(R.id.two_step_switch)).setText(R.string.fa_two_step_confirm);
                     ((Switch) findViewById(R.id.stack_switch)).setText(R.string.fa_stack);
-                    ((Switch) findViewById(R.id.time_switch)).setText(R.string.fa_time_based);
+                    ((Switch) findViewById(R.id.time_switch_daily)).setText(R.string.fa_time_based);
+                    ((Switch) findViewById(R.id.time_switch_hourly)).setText(R.string.fa_time_based_hourly);
                     ((Button) findViewById(R.id.cancel)).setText(R.string.fa_cancel);
                     ((Button) findViewById(R.id.confirm)).setText(R.string.fa_confirm);
                     ((RadioButton) findViewById(R.id.radioButton1)).setText(R.string.fa_dynamic);
                     ((RadioButton) findViewById(R.id.radioButton2)).setText(R.string.fa_static);
-                    ((EditText) findViewById(R.id.time_start_text)).setHint(R.string.fa_time_start_text);
-                    ((EditText) findViewById(R.id.time_deadline_text)).setHint(R.string.fa_time_deadline_text);
-                    prefs.edit().putBoolean(mAppWidgetId + "language", false).apply();
+                    ((EditText) findViewById(R.id.time_start_text_daily)).setHint(R.string.fa_time_start_text);
+                    ((EditText) findViewById(R.id.time_deadline_text_daily)).setHint(R.string.fa_time_deadline_text);
+                    ((EditText) findViewById(R.id.time_deadline_text_hourly)).setHint(R.string.fa_time_based_hourly_period_offtime);
                 }
             }
         });
 
-        Switch timeSw = findViewById(R.id.time_switch);
+        final Switch timeSw = findViewById(R.id.time_switch_daily);
         timeSw.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                if (isChecked) {
-                    findViewById(R.id.time_start_text).setVisibility(View.VISIBLE);
-                    findViewById(R.id.time_deadline_text).setVisibility(View.VISIBLE);
-                } else {
-                    findViewById(R.id.time_start_text).setVisibility(View.GONE);
-                    findViewById(R.id.time_deadline_text).setVisibility(View.GONE);
-                }
                 prefs.edit().putBoolean(mAppWidgetId + "isTime", isChecked).apply();
+                if (isChecked) {
+                    findViewById(R.id.time_start_text_daily).setVisibility(View.VISIBLE);
+                    findViewById(R.id.time_deadline_text_daily).setVisibility(View.VISIBLE);
+                } else {
+                    findViewById(R.id.time_start_text_daily).setVisibility(View.GONE);
+                    findViewById(R.id.time_deadline_text_daily).setVisibility(View.GONE);
+                }
+            }
+        });
+        final Switch doubleTapSw = findViewById(R.id.two_step_switch);
+        final Switch stackSw = findViewById(R.id.stack_switch);
+        final RadioGroup radioGroup = findViewById(R.id.config_radioGroup);
+        Switch timeSwHr = findViewById(R.id.time_switch_hourly);
+        timeSwHr.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
+                prefs.edit().putBoolean(mAppWidgetId + "hour", isHour = isChecked).apply();
+                if (isChecked) {
+                    findViewById(R.id.time_deadline_text_hourly).setVisibility(View.VISIBLE);
+                    findViewById(R.id.time_start_text_daily).setVisibility(View.GONE);
+                    findViewById(R.id.time_deadline_text_daily).setVisibility(View.GONE);
+                    timeSw.setChecked(false);
+                    timeSw.setEnabled(false);
+                    doubleTapSw.setChecked(false);
+                    doubleTapSw.setEnabled(false);
+                    stackSw.setChecked(false);
+                    stackSw.setEnabled(false);
+                    radioGroup.check(R.id.radioButton1);
+                    radioGroup.getChildAt(1).setEnabled(false);
+                    seeker.setProgress(0);
+                } else {
+                    findViewById(R.id.time_deadline_text_hourly).setVisibility(View.GONE);
+                    timeSw.setEnabled(true);
+                    doubleTapSw.setEnabled(true);
+                    stackSw.setEnabled(true);
+                    radioGroup.setEnabled(true);
+                    radioGroup.getChildAt(1).setEnabled(true);
+                    seeker.setProgress(0);
+
+                }
+                inputsWrapper.removeAllViews();
             }
         });
     }
 
     private String[] removeEmptyStringsFromArray(String[] inputs) {
         String result = "";
-        for(String in : inputs) {
+        for (String in : inputs) {
             result += in.substring(6).isEmpty() ? "" : in + INPUTS_DELIMITER;
         }
         inputs = result.split(INPUTS_DELIMITER);
@@ -217,19 +304,19 @@ public class Configurations extends AppCompatActivity {
 
         boolean isTime = prefs.getBoolean(mAppWidgetId + "isTime", false);
 
-        EditText timeStartText = findViewById(R.id.time_start_text);
+        EditText timeStartText = findViewById(R.id.time_start_text_daily);
         String startText = timeStartText.getText().toString();
         if (isTime && (startText.isEmpty() || Integer.valueOf(startText.substring(0, 2)) > 23)) {
             startText = "06:00";
-            Toast.makeText(context, language ? getString(R.string.en_start_time_toast_dialog) + " " + startText :getString(R.string.fa_start_time_toast_dialog) + " " + startText, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, language ? getString(R.string.en_start_time_toast_dialog) + " " + startText : getString(R.string.fa_start_time_toast_dialog) + " " + startText, Toast.LENGTH_LONG).show();
         }
         prefs.edit().putString(mAppWidgetId + "timeStartText", startText).apply();
 
-        EditText timeDeadlineText = findViewById(R.id.time_deadline_text);
+        EditText timeDeadlineText = findViewById(R.id.time_deadline_text_daily);
         String deadlineText = timeDeadlineText.getText().toString();
         if (isTime && (deadlineText.isEmpty() || Integer.valueOf(deadlineText.substring(0, 2)) > 23)) {
             deadlineText = "18:00";
-            Toast.makeText(context, language ? getString(R.string.en_deadline_time_toast_dialog) + " " + deadlineText :getString(R.string.fa_deadline_time_toast_dialog) + " " + deadlineText, Toast.LENGTH_LONG).show();
+            Toast.makeText(context, language ? getString(R.string.en_deadline_time_toast_dialog) + " " + deadlineText : getString(R.string.fa_deadline_time_toast_dialog) + " " + deadlineText, Toast.LENGTH_LONG).show();
         }
         prefs.edit().putString(mAppWidgetId + "timeDeadlineText", deadlineText).apply();
 
@@ -259,8 +346,9 @@ public class Configurations extends AppCompatActivity {
                 return Color.BLACK;
         }
     }
+
     public static RemoteViews initAppWidgets(Context context, final AppWidgetManager appWidgetManager,
-                                      final int appWidgetId) {
+                                             final int appWidgetId) {
 
         SharedPreferences prefs = context.getSharedPreferences(context.getPackageName() + ".prefs", Context.MODE_PRIVATE);
         String[] data = prefs.getString(appWidgetId + "", "").split(INPUTS_DELIMITER);
@@ -361,8 +449,48 @@ public class Configurations extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Toast.makeText(this, "Seyyed.Alireza.Jamali@gmail.com", Toast.LENGTH_LONG).show();
-        Toast.makeText(this, "Telegram: @aeza90", Toast.LENGTH_LONG).show();
-        return super.onOptionsItemSelected(item);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+
+            case R.id.myket_page:
+                try {
+                    startMyketActivity("myket://details?id=" + PACKAGE_NAME);
+                } catch (ActivityNotFoundException e) {
+                    startMyketActivity("https://myket.ir/app/" + PACKAGE_NAME);
+                }
+                return true;
+
+            case R.id.myket_comment:
+                try {
+                    startMyketActivity("myket://comment?id=" + PACKAGE_NAME);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, "ابتدا مایکت را نصب نمایید.", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
+            case R.id.myket_list:
+                try {
+                    startMyketActivity("myket://developer/" + PACKAGE_NAME);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(this, "ابتدا مایکت را نصب نمایید.", Toast.LENGTH_LONG).show();
+                }
+                return true;
+
+            case R.id.author:
+                Toast.makeText(this, "Seyyed.Alireza.Jamali@gmail.com", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Instagram: @aeza90", Toast.LENGTH_LONG).show();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void startMyketActivity(String url) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        startActivity(intent);
     }
 }

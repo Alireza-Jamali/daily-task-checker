@@ -8,28 +8,35 @@
     <string name="fa_cancel">انصراف</string>
     <string name="fa_confirm">تایید</string>
     <string name="fa_two_step_confirm">تایید دو مرحله ای</string>
-    <string name="fa_dynamic">متغیر</string>
-    <string name="fa_stack">متحرک</string>
+    <string name="fa_dynamic">کلیدوار</string>
+    <string name="fa_stack">انتقال فعالیت انجام شده به انتها</string>
     <string name="fa_static">ثابت</string>
-    <string name="fa_time_based">اعمال زمان</string>
+    <string name="fa_time_based">افزودن هشدار روزانه</string>
+    <string name="fa_time_based_hourly">فقط هشدار ساعتی</string>
+    <string name="fa_time_based_hourly_period">هر چند ساعت؟</string>
+    <string name="fa_time_based_hourly_period_offtime">ساعات خاموش</string>
     <string name="fa_name_already_in_use">این نام قبلا استفاده شده است</string>
-    <string name="fa_cant_be_empty">نام خالی میباشد!</string>
+    <string name="fa_cant_be_empty">اطلاعات وارد نشده!</string>
     <string name="fa_time_start_text">از چه ساعتی شروع شود؟ (مثال 13:00)</string>
     <string name="fa_time_deadline_text">چه ساعتی هشدار فراموشی داده شود؟</string>
     <string name="fa_missed_task">فعالیت فراموش شده!</string>
     <string name="fa_start_time_toast_dialog">زمان شروع تغییر یافت به</string>
     <string name="fa_deadline_time_toast_dialog">زمان هشدار تغییر یافت به</string>
+    <string name="fa_repeatHR">ساعت</string>
 
-    <string name="en_name">Name</string>
+    <string name="en_name">name</string>
     <string name="en_cancel">Cancel</string>
     <string name="en_confirm">Confirm</string>
     <string name="en_two_step_confirm">Double Tap</string>
     <string name="en_dynamic">Dynamic</string>
     <string name="en_stack">Stack</string>
     <string name="en_static">Static</string>
-    <string name="en_time_based">Time Based</string>
+    <string name="en_time_based">Add Daily Notification</string>
+    <string name="en_time_based_hourly">Hourly Alarm Only!</string>
+    <string name="en_time_based_hourly_period">Alarm Period</string>
+    <string name="en_time_based_hourly_offtime">Off Hours</string>
     <string name="en_name_already_in_use">name already in use!</string>
-    <string name="en_cant_be_empty">Can\'t be empty!</string>
+    <string name="en_cant_be_empty">Cannot be empty!</string>
     <string name="en_time_start_text">When to start the task? (example 13:00)</string>
     <string name="en_time_deadline_text">When is the deadline?</string>
     <string name="channel_name">aeza</string>
@@ -39,6 +46,11 @@
     <string name="en_start_time_toast_dialog">Start time changed to</string>
     <string name="en_deadline_time_toast_dialog">Deadline time changed to</string>
     <string name="fa_author">Author: Seyyed Alireza Jamali</string>
+    <string name="en_repeatHR">Hour</string>
+    <string name="myket_page">صفحه برنامه در مایکت</string>
+    <string name="myket_comment">ارسال نظر</string>
+    <string name="myket_list">برنامه های دیگر من</string>
+    <string name="author">تماس با توسعه دهنده</string>
 
 
 </resources>

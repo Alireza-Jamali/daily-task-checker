@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/myket_page"
+        android:title="@string/myket_page"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/myket_comment"
+        android:title="@string/myket_comment"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/myket_list"
+        android:title="@string/myket_list"
+        app:showAsAction="never"/>
     <item
         android:id="@+id/author"
-        android:orderInCategory="100"
-        app:showAsAction="never"
-        android:title="@string/fa_author"/>
+        android:title="@string/author"
+        app:showAsAction="never"/>
 </menu>

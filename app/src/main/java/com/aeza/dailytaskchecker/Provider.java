@@ -15,15 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import static com.aeza.dailytaskchecker.Configurations.GREEN_COLOR;
-import static com.aeza.dailytaskchecker.Configurations.GREEN_STATE;
-import static com.aeza.dailytaskchecker.Configurations.INPUTS_DELIMITER;
-import static com.aeza.dailytaskchecker.Configurations.NO_STATE;
-import static com.aeza.dailytaskchecker.Configurations.ORANGE_COLOR;
-import static com.aeza.dailytaskchecker.Configurations.ORANGE_STATE;
-import static com.aeza.dailytaskchecker.Configurations.TIME_STATE;
-import static com.aeza.dailytaskchecker.Configurations.getColorFromState;
-import static com.aeza.dailytaskchecker.Configurations.initAppWidgets;
+import static com.aeza.dailytaskchecker.Configurations.*;
 import static java.util.Calendar.HOUR_OF_DAY;
 import static java.util.Calendar.MINUTE;
 
